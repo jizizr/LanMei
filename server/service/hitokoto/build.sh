@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-RUN_NAME="hitokoto"
+RUN_NAME="rpc"
 mkdir -p output/bin output/conf
 cp script/* output/
 cp -r conf/* output/conf

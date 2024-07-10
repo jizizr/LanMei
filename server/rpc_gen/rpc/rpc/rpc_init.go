@@ -1,4 +1,4 @@
-package hitokoto
+package rpc
 
 import (
 	"sync"
@@ -11,7 +11,7 @@ import (
 var (
 	// todo edit custom config
 	defaultClient     RPCClient
-	defaultDstService = "hitokoto"
+	defaultDstService = "rpc"
 	defaultClientOpts = []client.Option{
 		client.WithHostPorts("127.0.0.1:8888"),
 		client.WithMetaHandler(transmeta.ClientTTHeaderHandler),

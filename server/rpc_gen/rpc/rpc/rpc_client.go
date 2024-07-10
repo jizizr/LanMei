@@ -1,4 +1,4 @@
-package hitokoto
+package rpc
 
 import (
 	"context"
