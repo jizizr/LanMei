@@ -4,11 +4,11 @@ package rpcservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	hitokoto "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/hitokoto"
+	rpc "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/rpc"
 )
 
 // NewInvoker creates a server.Invoker with the given handler and options.
-func NewInvoker(handler hitokoto.RpcService, opts ...server.Option) server.Invoker {
+func NewInvoker(handler rpc.RpcService, opts ...server.Option) server.Invoker {
 	var options []server.Option
 
 	options = append(options, opts...)

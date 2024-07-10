@@ -3,14 +3,13 @@ package service
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/jinzhu/copier"
 	bot2 "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
-	"github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/hitokoto/rpcservice"
+	"github.com/jizizr/LanMei/server/service/bot/biz/global"
 	bot "github.com/jizizr/LanMei/server/service/bot/hertz_gen/bot"
-	consul "github.com/kitex-contrib/registry-consul"
-	"log"
+	"strings"
 )
 
 type GetMessageService struct {
@@ -28,34 +27,28 @@ func (h *GetMessageService) Run(req *bot.Message) (resp *bot.Response, err error
 	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	//}()
 	klog.Info("GetMessageService.Run", "msg", req)
-	r, err := consul.NewConsulResolver("127.0.0.1:8500")
-	if err != nil {
-		log.Fatal(err)
+	if req.Message == nil {
+		return
 	}
-	var msg bot2.Message
-	copier.Copy(&msg, req)
-	//fmt.Println(msg)
-	//c, err := rpcservice.NewClient("hitokoto", client.WithResolver(r))
-	//fmt.Println(c.Call(h.Context, &msg))
-	//d, err := rpcservice.NewClient("history", client.WithResolver(r))
-	//fmt.Println(d.Call(h.Context, &msg))
-	c, err := rpcservice.NewClient("hitokoto", client.WithResolver(r))
-	if err != nil {
-		log.Fatal(err)
+	for _, msg := range req.Message {
+		if msg.Type != "text" {
+			continue
+		}
+		command := strings.TrimSpace(*msg.Data.Text)
+		if strings.HasPrefix(command, "/") {
+			var m bot2.Message
+			err = copier.Copy(&m, req)
+			if err != nil {
+				hlog.Error(h.Context, "copier.Copy", "err", err)
+				return
+			}
+			command = strings.SplitN(command, " ", 2)[0]
+			_, err = global.Manager.CallCommand(strings.TrimPrefix(command, "/"), &m)
+			if err != nil {
+				hlog.Error(h.Context, "global.Manager.CallCommand", "err", err)
+				return
+			}
+		}
 	}
-	_, err = c.Call(h.Context, &msg)
-	if err != nil {
-		klog.Error(err)
-	}
-	c, err = rpcservice.NewClient("history", client.WithResolver(r))
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = c.Call(h.Context, &msg)
-	println(1)
-	if err != nil {
-		klog.Error(err)
-	}
-	resp.Success = true
 	return
 }

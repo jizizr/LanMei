@@ -11,7 +11,7 @@ const (
 	BaseUrl = "http://127.0.0.1:3000"
 )
 
-var client = req.C().
+var msgClient = req.C().
 	SetBaseURL(BaseUrl).
 	R().
 	SetRetryCount(3).
@@ -45,7 +45,7 @@ func (m *Msg) Send() (int64, error) {
 		return 0, err
 	}
 	var resp Response
-	r, err := client.SetBodyBytes(content).SetSuccessResult(&resp).Post("/send_msg")
+	r, err := msgClient.SetBodyBytes(content).SetSuccessResult(&resp).Post("/send_msg")
 	if err != nil {
 		klog.Error("send message error ", err, m)
 		return 0, err

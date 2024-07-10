@@ -9,7 +9,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
-	"github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/hitokoto/rpcservice"
+	"github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/rpc/rpcservice"
 	"github.com/jizizr/LanMei/server/service/history/conf"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	"go.uber.org/zap/zapcore"

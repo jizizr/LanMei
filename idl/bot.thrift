@@ -7,10 +7,14 @@ struct Sender {
   4: optional string role  // 群聊角色，只有在群聊消息中才有
 }
 
+struct Data {
+  1: optional string text,
+  2: optional string id  // 表情符号 ID
+}
+
 struct MessageData {
   1: string type,
-  2: optional string text,
-  3: optional string id  // 表情符号 ID
+  2: Data data
 }
 
 struct Message {

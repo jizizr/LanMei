@@ -7,11 +7,14 @@ import (
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
+	rpc "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/rpc"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	Call(ctx context.Context, message *bot.Message, callOptions ...callopt.Option) (r bool, err error)
+	Type(ctx context.Context, empty *rpc.Empty, callOptions ...callopt.Option) (r rpc.CmdType, err error)
+	Command(ctx context.Context, empty *rpc.Empty, callOptions ...callopt.Option) (r *rpc.Cmd, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -46,4 +49,14 @@ type kRpcServiceClient struct {
 func (p *kRpcServiceClient) Call(ctx context.Context, message *bot.Message, callOptions ...callopt.Option) (r bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Call(ctx, message)
+}
+
+func (p *kRpcServiceClient) Type(ctx context.Context, empty *rpc.Empty, callOptions ...callopt.Option) (r rpc.CmdType, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.Type(ctx, empty)
+}
+
+func (p *kRpcServiceClient) Command(ctx context.Context, empty *rpc.Empty, callOptions ...callopt.Option) (r *rpc.Cmd, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.Command(ctx, empty)
 }

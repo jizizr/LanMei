@@ -3,11 +3,11 @@ package rpcservice
 
 import (
 	server "github.com/cloudwego/kitex/server"
-	hitokoto "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/hitokoto"
+	rpc "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/rpc"
 )
 
 // NewServer creates a server.Server with the given handler and options.
-func NewServer(handler hitokoto.RpcService, opts ...server.Option) server.Server {
+func NewServer(handler rpc.RpcService, opts ...server.Option) server.Server {
 	var options []server.Option
 
 	options = append(options, opts...)
@@ -20,6 +20,6 @@ func NewServer(handler hitokoto.RpcService, opts ...server.Option) server.Server
 	return svr
 }
 
-func RegisterService(svr server.Server, handler hitokoto.RpcService, opts ...server.RegisterOption) error {
+func RegisterService(svr server.Server, handler rpc.RpcService, opts ...server.RegisterOption) error {
 	return svr.RegisterService(serviceInfo(), handler, opts...)
 }

@@ -11,6 +11,13 @@ import (
 	"time"
 )
 
+type CallService struct {
+	ctx context.Context
+} // NewCallService new CallService
+func NewCallService(ctx context.Context) *CallService {
+	return &CallService{ctx: ctx}
+}
+
 const (
 	BaseUrl = "https://v1.hitokoto.cn/"
 )
@@ -34,12 +41,6 @@ type quote struct {
 	CommitFrom string `json:"commit_from"`
 	CreatedAt  string `json:"created_at"`
 	Length     int    `json:"length"`
-}
-type CallService struct {
-	ctx context.Context
-} // NewCallService new CallService
-func NewCallService(ctx context.Context) *CallService {
-	return &CallService{ctx: ctx}
 }
 
 // Run create note info

@@ -366,66 +366,57 @@ func (p *Sender) Field4DeepEqual(src *string) bool {
 	return true
 }
 
-type MessageData struct {
-	Type string  `thrift:"type,1" frugal:"1,default,string" json:"type"`
-	Text *string `thrift:"text,2,optional" frugal:"2,optional,string" json:"text,omitempty"`
-	Id   *string `thrift:"id,3,optional" frugal:"3,optional,string" json:"id,omitempty"`
+type Data struct {
+	Text *string `thrift:"text,1,optional" frugal:"1,optional,string" json:"text,omitempty"`
+	Id   *string `thrift:"id,2,optional" frugal:"2,optional,string" json:"id,omitempty"`
 }
 
-func NewMessageData() *MessageData {
-	return &MessageData{}
+func NewData() *Data {
+	return &Data{}
 }
 
-func (p *MessageData) InitDefault() {
-	*p = MessageData{}
+func (p *Data) InitDefault() {
+	*p = Data{}
 }
 
-func (p *MessageData) GetType() (v string) {
-	return p.Type
-}
+var Data_Text_DEFAULT string
 
-var MessageData_Text_DEFAULT string
-
-func (p *MessageData) GetText() (v string) {
+func (p *Data) GetText() (v string) {
 	if !p.IsSetText() {
-		return MessageData_Text_DEFAULT
+		return Data_Text_DEFAULT
 	}
 	return *p.Text
 }
 
-var MessageData_Id_DEFAULT string
+var Data_Id_DEFAULT string
 
-func (p *MessageData) GetId() (v string) {
+func (p *Data) GetId() (v string) {
 	if !p.IsSetId() {
-		return MessageData_Id_DEFAULT
+		return Data_Id_DEFAULT
 	}
 	return *p.Id
 }
-func (p *MessageData) SetType(val string) {
-	p.Type = val
-}
-func (p *MessageData) SetText(val *string) {
+func (p *Data) SetText(val *string) {
 	p.Text = val
 }
-func (p *MessageData) SetId(val *string) {
+func (p *Data) SetId(val *string) {
 	p.Id = val
 }
 
-var fieldIDToName_MessageData = map[int16]string{
-	1: "type",
-	2: "text",
-	3: "id",
+var fieldIDToName_Data = map[int16]string{
+	1: "text",
+	2: "id",
 }
 
-func (p *MessageData) IsSetText() bool {
+func (p *Data) IsSetText() bool {
 	return p.Text != nil
 }
 
-func (p *MessageData) IsSetId() bool {
+func (p *Data) IsSetId() bool {
 	return p.Id != nil
 }
 
-func (p *MessageData) Read(iprot thrift.TProtocol) (err error) {
+func (p *Data) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -460,9 +451,247 @@ func (p *MessageData) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
-		case 3:
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_Data[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *Data) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.Text = _field
+	return nil
+}
+func (p *Data) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.Id = _field
+	return nil
+}
+
+func (p *Data) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("Data"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *Data) writeField1(oprot thrift.TProtocol) (err error) {
+	if p.IsSetText() {
+		if err = oprot.WriteFieldBegin("text", thrift.STRING, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Text); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *Data) writeField2(oprot thrift.TProtocol) (err error) {
+	if p.IsSetId() {
+		if err = oprot.WriteFieldBegin("id", thrift.STRING, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Id); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *Data) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("Data(%+v)", *p)
+
+}
+
+func (p *Data) DeepEqual(ano *Data) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.Text) {
+		return false
+	}
+	if !p.Field2DeepEqual(ano.Id) {
+		return false
+	}
+	return true
+}
+
+func (p *Data) Field1DeepEqual(src *string) bool {
+
+	if p.Text == src {
+		return true
+	} else if p.Text == nil || src == nil {
+		return false
+	}
+	if strings.Compare(*p.Text, *src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *Data) Field2DeepEqual(src *string) bool {
+
+	if p.Id == src {
+		return true
+	} else if p.Id == nil || src == nil {
+		return false
+	}
+	if strings.Compare(*p.Id, *src) != 0 {
+		return false
+	}
+	return true
+}
+
+type MessageData struct {
+	Type string `thrift:"type,1" frugal:"1,default,string" json:"type"`
+	Data *Data  `thrift:"data,2" frugal:"2,default,Data" json:"data"`
+}
+
+func NewMessageData() *MessageData {
+	return &MessageData{}
+}
+
+func (p *MessageData) InitDefault() {
+	*p = MessageData{}
+}
+
+func (p *MessageData) GetType() (v string) {
+	return p.Type
+}
+
+var MessageData_Data_DEFAULT *Data
+
+func (p *MessageData) GetData() (v *Data) {
+	if !p.IsSetData() {
+		return MessageData_Data_DEFAULT
+	}
+	return p.Data
+}
+func (p *MessageData) SetType(val string) {
+	p.Type = val
+}
+func (p *MessageData) SetData(val *Data) {
+	p.Data = val
+}
+
+var fieldIDToName_MessageData = map[int16]string{
+	1: "type",
+	2: "data",
+}
+
+func (p *MessageData) IsSetData() bool {
+	return p.Data != nil
+}
+
+func (p *MessageData) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
 			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField3(iprot); err != nil {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -509,25 +738,11 @@ func (p *MessageData) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 func (p *MessageData) ReadField2(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	_field := NewData()
+	if err := _field.Read(iprot); err != nil {
 		return err
-	} else {
-		_field = &v
 	}
-	p.Text = _field
-	return nil
-}
-func (p *MessageData) ReadField3(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.Id = _field
+	p.Data = _field
 	return nil
 }
 
@@ -543,10 +758,6 @@ func (p *MessageData) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
-			goto WriteFieldError
-		}
-		if err = p.writeField3(oprot); err != nil {
-			fieldId = 3
 			goto WriteFieldError
 		}
 	}
@@ -585,41 +796,20 @@ WriteFieldEndError:
 }
 
 func (p *MessageData) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetText() {
-		if err = oprot.WriteFieldBegin("text", thrift.STRING, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.Text); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("data", thrift.STRUCT, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Data.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *MessageData) writeField3(oprot thrift.TProtocol) (err error) {
-	if p.IsSetId() {
-		if err = oprot.WriteFieldBegin("id", thrift.STRING, 3); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.Id); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *MessageData) String() string {
@@ -639,10 +829,7 @@ func (p *MessageData) DeepEqual(ano *MessageData) bool {
 	if !p.Field1DeepEqual(ano.Type) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Text) {
-		return false
-	}
-	if !p.Field3DeepEqual(ano.Id) {
+	if !p.Field2DeepEqual(ano.Data) {
 		return false
 	}
 	return true
@@ -655,26 +842,9 @@ func (p *MessageData) Field1DeepEqual(src string) bool {
 	}
 	return true
 }
-func (p *MessageData) Field2DeepEqual(src *string) bool {
+func (p *MessageData) Field2DeepEqual(src *Data) bool {
 
-	if p.Text == src {
-		return true
-	} else if p.Text == nil || src == nil {
-		return false
-	}
-	if strings.Compare(*p.Text, *src) != 0 {
-		return false
-	}
-	return true
-}
-func (p *MessageData) Field3DeepEqual(src *string) bool {
-
-	if p.Id == src {
-		return true
-	} else if p.Id == nil || src == nil {
-		return false
-	}
-	if strings.Compare(*p.Id, *src) != 0 {
+	if !p.Data.DeepEqual(src) {
 		return false
 	}
 	return true

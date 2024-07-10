@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"github.com/jizizr/LanMei/server/service/bot/biz/global"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -27,10 +28,9 @@ func main() {
 	// init dal
 	// dal.Init()
 	address := conf.GetConf().Hertz.Address
-	h := server.New(server.WithHostPorts(address))
-
+	h := server.New(server.WithHostPorts(address), server.WithExitWaitTime(0))
+	go global.Manager.Watch()
 	registerMiddleware(h)
-
 	// add a ping route to test
 	h.GET("/ping", func(c context.Context, ctx *app.RequestContext) {
 		ctx.JSON(consts.StatusOK, utils.H{"ping": "pong"})

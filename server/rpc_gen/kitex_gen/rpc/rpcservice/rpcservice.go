@@ -8,7 +8,7 @@ import (
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
-	hitokoto "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/hitokoto"
+	rpc "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/rpc"
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
@@ -18,6 +18,20 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		callHandler,
 		newRpcServiceCallArgs,
 		newRpcServiceCallResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"Type": kitex.NewMethodInfo(
+		typeHandler,
+		newRpcServiceTypeArgs,
+		newRpcServiceTypeResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"Command": kitex.NewMethodInfo(
+		commandHandler,
+		newRpcServiceCommandArgs,
+		newRpcServiceCommandResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -59,7 +73,7 @@ func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 
 func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreamingMethods bool) *kitex.ServiceInfo {
 	serviceName := "RpcService"
-	handlerType := (*hitokoto.RpcService)(nil)
+	handlerType := (*rpc.RpcService)(nil)
 	methods := map[string]kitex.MethodInfo{}
 	for name, m := range serviceMethods {
 		if m.IsStreaming() && !keepStreamingMethods {
@@ -71,7 +85,7 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 		methods[name] = m
 	}
 	extra := map[string]interface{}{
-		"PackageName": "hitokoto",
+		"PackageName": "rpc",
 	}
 	if hasStreaming {
 		extra["streaming"] = hasStreaming
@@ -88,9 +102,9 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 }
 
 func callHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*hitokoto.RpcServiceCallArgs)
-	realResult := result.(*hitokoto.RpcServiceCallResult)
-	success, err := handler.(hitokoto.RpcService).Call(ctx, realArg.Message)
+	realArg := arg.(*rpc.RpcServiceCallArgs)
+	realResult := result.(*rpc.RpcServiceCallResult)
+	success, err := handler.(rpc.RpcService).Call(ctx, realArg.Message)
 	if err != nil {
 		return err
 	}
@@ -98,11 +112,47 @@ func callHandler(ctx context.Context, handler interface{}, arg, result interface
 	return nil
 }
 func newRpcServiceCallArgs() interface{} {
-	return hitokoto.NewRpcServiceCallArgs()
+	return rpc.NewRpcServiceCallArgs()
 }
 
 func newRpcServiceCallResult() interface{} {
-	return hitokoto.NewRpcServiceCallResult()
+	return rpc.NewRpcServiceCallResult()
+}
+
+func typeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*rpc.RpcServiceTypeArgs)
+	realResult := result.(*rpc.RpcServiceTypeResult)
+	success, err := handler.(rpc.RpcService).Type(ctx, realArg.Empty)
+	if err != nil {
+		return err
+	}
+	realResult.Success = &success
+	return nil
+}
+func newRpcServiceTypeArgs() interface{} {
+	return rpc.NewRpcServiceTypeArgs()
+}
+
+func newRpcServiceTypeResult() interface{} {
+	return rpc.NewRpcServiceTypeResult()
+}
+
+func commandHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*rpc.RpcServiceCommandArgs)
+	realResult := result.(*rpc.RpcServiceCommandResult)
+	success, err := handler.(rpc.RpcService).Command(ctx, realArg.Empty)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newRpcServiceCommandArgs() interface{} {
+	return rpc.NewRpcServiceCommandArgs()
+}
+
+func newRpcServiceCommandResult() interface{} {
+	return rpc.NewRpcServiceCommandResult()
 }
 
 type kClient struct {
@@ -116,10 +166,30 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) Call(ctx context.Context, message *bot.Message) (r bool, err error) {
-	var _args hitokoto.RpcServiceCallArgs
+	var _args rpc.RpcServiceCallArgs
 	_args.Message = message
-	var _result hitokoto.RpcServiceCallResult
+	var _result rpc.RpcServiceCallResult
 	if err = p.c.Call(ctx, "Call", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) Type(ctx context.Context, empty *rpc.Empty) (r rpc.CmdType, err error) {
+	var _args rpc.RpcServiceTypeArgs
+	_args.Empty = empty
+	var _result rpc.RpcServiceTypeResult
+	if err = p.c.Call(ctx, "Type", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) Command(ctx context.Context, empty *rpc.Empty) (r *rpc.Cmd, err error) {
+	var _args rpc.RpcServiceCommandArgs
+	_args.Empty = empty
+	var _result rpc.RpcServiceCommandResult
+	if err = p.c.Call(ctx, "Command", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
