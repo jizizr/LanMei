@@ -47,6 +47,8 @@ func kitexInit() (opts []server.Option) {
 		panic(err)
 	}
 	opts = append(opts, server.WithRegistry(r))
+	//mux transport
+	opts = append(opts, server.WithMuxTransport())
 	// klog
 	logger := kitexlogrus.NewLogger()
 	klog.SetLogger(logger)

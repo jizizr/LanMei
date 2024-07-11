@@ -28,7 +28,7 @@ type RpcClientWithDescription struct {
 	Desc   string
 }
 
-func (cmd *ServiceManager) sync(services map[string][]string) {
+func (cmd *ServiceManager) sync(services map[string]struct{}) {
 	for service := range cmd.services {
 		if _, ok := services[service]; !ok {
 			cmd.command.Delete(cmd.services[service])
@@ -38,19 +38,12 @@ func (cmd *ServiceManager) sync(services map[string][]string) {
 	}
 	for service := range services {
 		if _, ok := cmd.services[service]; !ok {
-			c, err := rpcservice.NewClient(service, client.WithResolver(cmd.r))
+			c, err := rpcservice.NewClient(service, client.WithResolver(cmd.r), client.WithMuxConnection(2))
 			if err != nil {
 				klog.Error("Error creating client: %v", err)
 			}
 			var t rpc.CmdType
 			t, err = c.Type(context.Background(), &rpc.Empty{})
-			dur := 400
-			for i := 0; err != nil && i < 5; i++ {
-				time.Sleep(time.Duration(dur) * time.Millisecond)
-				dur *= 2
-				klog.Info("try to get service type: ", service)
-				t, err = c.Type(context.Background(), &rpc.Empty{})
-			}
 			if err != nil {
 				klog.Error("Error getting service type: ", err, ",service: ", service)
 				continue
@@ -79,14 +72,7 @@ func (cmd *ServiceManager) sync(services map[string][]string) {
 func (cmd *ServiceManager) CallCommand(command string, message *bot.Message) (bool, error) {
 	if v, ok := cmd.command.Load(command); ok {
 		c := v.(RpcClientWithDescription).Client
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		f, err := c.Call(ctx, message)
-		if f == false && err != nil {
-			klog.Error("Error calling command: ", err, ", retrying...")
-			f, err = c.Call(ctx, message)
-		}
-		return f, err
+		return c.Call(context.Background(), message)
 	}
 	return false, nil
 }
@@ -113,18 +99,23 @@ func (cmd *ServiceManager) Watch() {
 	var lastIndex uint64
 	for {
 		// Query the catalog for a list of services
-		services, meta, err := cmd.c.Catalog().Services(&api.QueryOptions{
+		healthChecks, meta, err := cmd.c.Health().State("passing", &api.QueryOptions{
 			WaitIndex: lastIndex,
-			WaitTime:  5 * time.Second,
+			WaitTime:  30 * time.Second,
 		})
 		if err != nil {
 			log.Fatalf("Error fetching services: %v", err)
 		}
-
 		// Check if there is any change in the services
 		if meta.LastIndex != lastIndex {
 			lastIndex = meta.LastIndex
-			delete(services, "consul")
+			services := make(map[string]struct{})
+			for _, healthCheck := range healthChecks {
+				if healthCheck.ServiceName == "" {
+					continue
+				}
+				services[healthCheck.ServiceName] = struct{}{}
+			}
 			cmd.sync(services)
 		}
 	}
@@ -133,7 +124,7 @@ func (cmd *ServiceManager) Watch() {
 func NewServiceManager(registryAddress string) (*ServiceManager, error) {
 	config := api.DefaultConfig()
 	config.Address = registryAddress
-	client, err := api.NewClient(config)
+	c, err := api.NewClient(config)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +136,7 @@ func NewServiceManager(registryAddress string) (*ServiceManager, error) {
 		services: make(map[string]string),
 		command:  &sync.Map{},
 		text:     &sync.Map{},
-		c:        client,
+		c:        c,
 		r:        r,
 	}, nil
 }
