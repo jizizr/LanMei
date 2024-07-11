@@ -1,15 +1,15 @@
 package global
 
 import (
-	"github.com/jizizr/LanMei/server/common"
+	"github.com/jizizr/LanMei/server/service/bot/biz/utils"
 	"github.com/jizizr/LanMei/server/service/bot/conf"
 )
 
-var Manager *common.ServiceManager
+var Manager *utils.ServiceManager
 
 func init() {
 	var err error
-	Manager, err = common.NewServiceManager(conf.GetConf().Hertz.RegistryAddress)
+	Manager, err = utils.NewServiceManager(conf.GetConf().Hertz.RegistryAddress)
 	if err != nil {
 		panic(err)
 	}

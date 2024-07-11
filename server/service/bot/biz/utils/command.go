@@ -1,4 +1,4 @@
-package common
+package utils
 
 import (
 	"context"
@@ -44,7 +44,7 @@ func (cmd *ServiceManager) sync(services map[string][]string) {
 			}
 			var t rpc.CmdType
 			t, err = c.Type(context.Background(), &rpc.Empty{})
-			dur := 300
+			dur := 400
 			for i := 0; err != nil && i < 5; i++ {
 				time.Sleep(time.Duration(dur) * time.Millisecond)
 				dur *= 2

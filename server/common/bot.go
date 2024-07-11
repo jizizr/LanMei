@@ -3,19 +3,13 @@ package common
 import (
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/imroc/req/v3"
-	"time"
 )
 
 const (
 	BaseUrl = "http://127.0.0.1:3000"
 )
 
-var msgClient = req.C().
-	SetBaseURL(BaseUrl).
-	R().
-	SetRetryCount(3).
-	SetRetryBackoffInterval(100*time.Millisecond, 500*time.Millisecond)
+var msgClient = DefaultHttpReq(BaseUrl)
 
 type Msg struct {
 	MessageType string `json:"message_type"`
