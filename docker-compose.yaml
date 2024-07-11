@@ -4,3 +4,6 @@ services:
     image: 'hashicorp/consul'
     ports:
       - '8500:8500'
+    extra_hosts:
+      # 仅测试环境下使用
+      - "consul:172.23.128.1"

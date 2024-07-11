@@ -67,7 +67,6 @@ func initConf() {
 	if err != nil {
 		panic(err)
 	}
-
 	conf = new(Config)
 	err = yaml.Unmarshal(content, conf)
 	if err != nil {

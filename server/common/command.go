@@ -2,8 +2,6 @@ package common
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/discovery"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -45,12 +43,12 @@ func (cmd *ServiceManager) sync(services map[string][]string) {
 				klog.Error("Error creating client: %v", err)
 			}
 			var t rpc.CmdType
-			err = errors.New("")
-			dur := 1000
-			for i := 0; err != nil && i < 3; i++ {
+			t, err = c.Type(context.Background(), &rpc.Empty{})
+			dur := 300
+			for i := 0; err != nil && i < 5; i++ {
 				time.Sleep(time.Duration(dur) * time.Millisecond)
 				dur *= 2
-				fmt.Println("try to get service type: ", service)
+				klog.Info("try to get service type: ", service)
 				t, err = c.Type(context.Background(), &rpc.Empty{})
 			}
 			if err != nil {
@@ -64,7 +62,7 @@ func (cmd *ServiceManager) sync(services map[string][]string) {
 					klog.Error("Error getting command description: ", err, ",service: ", service)
 					continue
 				}
-				fmt.Println(desc.Cmd, desc.Description)
+				klog.Info(desc.Cmd, desc.Description)
 				cmd.services[service] = desc.Cmd
 				cmd.command.Store(desc.Cmd, RpcClientWithDescription{
 					Client: c,
@@ -85,11 +83,30 @@ func (cmd *ServiceManager) CallCommand(command string, message *bot.Message) (bo
 		defer cancel()
 		f, err := c.Call(ctx, message)
 		if f == false && err != nil {
+			klog.Error("Error calling command: ", err, ", retrying...")
 			f, err = c.Call(ctx, message)
 		}
 		return f, err
 	}
 	return false, nil
+}
+
+func (cmd *ServiceManager) CallText(message bot.Message) {
+	cmd.text.Range(func(key, value interface{}) bool {
+		c := value.(rpcservice.Client)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		f, err := c.Call(ctx, &message)
+		if f == false && err != nil {
+			klog.Error("Error calling text: ", err, ", retrying...")
+			f, err = c.Call(ctx, &message)
+		}
+		if err != nil {
+			klog.Error("Error calling text: ", err, ", service: ", key, ", message: ", message)
+		}
+		return true
+	})
+
 }
 
 func (cmd *ServiceManager) Watch() {

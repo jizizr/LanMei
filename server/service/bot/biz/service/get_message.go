@@ -26,7 +26,8 @@ func (h *GetMessageService) Run(req *bot.Message) (resp *bot.Response, err error
 	// hlog.CtxInfof(h.Context, "req = %+v", req)
 	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	//}()
-	klog.Info("GetMessageService.Run", "msg", req)
+	resp = &bot.Response{Success: true}
+	klog.Info(req)
 	if req.Message == nil {
 		return
 	}
