@@ -3,6 +3,8 @@ package common
 import (
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
+	"strings"
 )
 
 const (
@@ -53,4 +55,19 @@ func (m *Msg) Send() (int64, error) {
 		return 0, err
 	}
 	return resp.Data.MessageId, nil
+}
+
+func IsBot(user int64) bool {
+	return user == 3328144510 || user >= 2854196301 && user <= 2854216399 || user == 66600000 || user >= 3889000000 && user <= 3889999999
+}
+
+func ExtractText(msg *bot.Message) string {
+	texts := make([]string, 0)
+	for _, m := range msg.Message {
+		if m.Type != "text" {
+			continue
+		}
+		texts = append(texts, *m.Data.Text)
+	}
+	return strings.Join(texts, "")
 }

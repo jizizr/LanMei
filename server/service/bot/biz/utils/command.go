@@ -62,6 +62,7 @@ func (cmd *ServiceManager) sync(services map[string]struct{}) {
 					Desc:   desc.Description,
 				})
 			case rpc.CmdType_TEXT:
+				klog.Info(t)
 				cmd.services[service] = ""
 				cmd.text.Store(service, c)
 			}
@@ -77,15 +78,15 @@ func (cmd *ServiceManager) CallCommand(command string, message *bot.Message) (bo
 	return false, nil
 }
 
-func (cmd *ServiceManager) CallText(message bot.Message) {
+func (cmd *ServiceManager) CallText(message *bot.Message) {
 	cmd.text.Range(func(key, value interface{}) bool {
 		c := value.(rpcservice.Client)
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		f, err := c.Call(ctx, &message)
+		f, err := c.Call(ctx, message)
 		if f == false && err != nil {
 			klog.Error("Error calling text: ", err, ", retrying...")
-			f, err = c.Call(ctx, &message)
+			f, err = c.Call(ctx, message)
 		}
 		if err != nil {
 			klog.Error("Error calling text: ", err, ", service: ", key, ", message: ", message)

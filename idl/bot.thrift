@@ -10,6 +10,12 @@ struct Sender {
 struct Data {
   1: optional string text,
   2: optional string id  // 表情符号 ID
+  3: optional string qq // QQ 号
+  4: optional string name // 名字
+  5: optional string type // 类型
+  6: optional string url // 音乐链接
+  7: optional string audio // 音频链接
+  8: optional string title // 标题
 }
 
 struct MessageData {

@@ -27,7 +27,7 @@ func (h *GetMessageService) Run(req *bot.Message) (resp *bot.Response, err error
 	// hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	//}()
 	resp = &bot.Response{Success: true}
-	klog.Info(req)
+	//klog.Info(req)
 	if req.Message == nil {
 		return
 	}
@@ -36,9 +36,9 @@ func (h *GetMessageService) Run(req *bot.Message) (resp *bot.Response, err error
 			continue
 		}
 		command := strings.TrimSpace(*msg.Data.Text)
+		var m bot2.Message
+		err = copier.Copy(&m, req)
 		if strings.HasPrefix(command, "/") {
-			var m bot2.Message
-			err = copier.Copy(&m, req)
 			if err != nil {
 				hlog.Error(h.Context, "copier.Copy", "err", err)
 				return
@@ -47,8 +47,10 @@ func (h *GetMessageService) Run(req *bot.Message) (resp *bot.Response, err error
 			_, err = global.Manager.CallCommand(strings.TrimPrefix(command, "/"), &m)
 			if err != nil {
 				hlog.Error(h.Context, "global.Manager.CallCommand", "err", err)
-				return
 			}
+		} else {
+			klog.Info("call text")
+			global.Manager.CallText(&m)
 		}
 	}
 	return
