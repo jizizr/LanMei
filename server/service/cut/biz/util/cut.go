@@ -18,9 +18,9 @@ func init() {
 	posSeg.WithGse(seg)
 }
 
-func Cut(sentence string) map[string]int {
+func Cut(sentence string) map[string]uint {
 	poss := posSeg.Cut(sentence, true)
-	words := make(map[string]int)
+	words := make(map[string]uint)
 	for _, po := range poss {
 		if _, ok := wordClass[po.Pos]; !ok {
 			continue

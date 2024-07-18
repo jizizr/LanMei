@@ -34,6 +34,15 @@ type Data struct {
 	MessageId int64 `json:"message_id"`
 }
 
+func NewMsg(message *bot.Message) Msg {
+	return Msg{
+		MessageType: message.MessageType,
+		UserID:      message.UserId,
+		GroupID:     message.GroupId,
+		Message:     "",
+		AutoEscape:  false,
+	}
+}
 func (m *Msg) Send() (int64, error) {
 	content, err := sonic.Marshal(m)
 	if err != nil {

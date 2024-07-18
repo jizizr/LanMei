@@ -22,7 +22,7 @@ func NewWord() {
 	}
 }
 
-func AddWords(groupID int64, words map[string]int) error {
+func AddWords(groupID int64, words map[string]uint) error {
 	if len(words) == 0 {
 		return nil
 	}
