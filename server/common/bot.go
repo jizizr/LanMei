@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
@@ -14,11 +15,12 @@ const (
 var msgClient = DefaultHttpReq(BaseUrl)
 
 type Msg struct {
-	MessageType string `json:"message_type"`
-	UserID      int64  `json:"user_id"`
-	GroupID     *int64 `json:"group_id"`
-	Message     string `json:"message"`
-	AutoEscape  bool   `json:"auto_escape"`
+	MessageType string `json:"message_type,omitempty"`
+	UserID      int64  `json:"user_id,omitempty"`
+	GroupID     *int64 `json:"group_id,omitempty"`
+	Message     string `json:"message,omitempty"`
+	Duration    uint32 `json:"duration,omitempty"`
+	AutoEscape  bool   `json:"auto_escape,omitempty"`
 }
 
 type Response struct {
@@ -34,8 +36,8 @@ type Data struct {
 	MessageId int64 `json:"message_id"`
 }
 
-func NewMsg(message *bot.Message) Msg {
-	return Msg{
+func NewMsg(message *bot.Message) *Msg {
+	return &Msg{
 		MessageType: message.MessageType,
 		UserID:      message.UserId,
 		GroupID:     message.GroupId,
@@ -43,14 +45,26 @@ func NewMsg(message *bot.Message) Msg {
 		AutoEscape:  false,
 	}
 }
-func (m *Msg) Send() (int64, error) {
+
+func (m *Msg) Reply(uid ...int64) *Msg {
+	var id int64
+	if len(uid) > 0 {
+		id = uid[0]
+	} else {
+		id = m.UserID
+	}
+	m.Message = fmt.Sprintf("[CQ:at,qq=%d] %s", id, m.Message)
+	return m
+}
+
+func (m *Msg) send(path string) (int64, error) {
 	content, err := sonic.Marshal(m)
 	if err != nil {
 		klog.Error("marshal message error ", err, m)
 		return 0, err
 	}
 	var resp Response
-	r, err := msgClient.SetBodyBytes(content).SetSuccessResult(&resp).Post("/send_msg")
+	r, err := msgClient.SetBodyBytes(content).SetSuccessResult(&resp).Post(path)
 	if err != nil {
 		klog.Error("send message error ", err, m)
 		return 0, err
@@ -64,6 +78,15 @@ func (m *Msg) Send() (int64, error) {
 		return 0, err
 	}
 	return resp.Data.MessageId, nil
+}
+
+func (m *Msg) SendMessage() (int64, error) {
+	return m.send("/send_msg")
+}
+
+func (m *Msg) SendBan(d uint32) (int64, error) {
+	m.Duration = d
+	return m.send("/set_group_ban")
 }
 
 func IsBot(user int64) bool {

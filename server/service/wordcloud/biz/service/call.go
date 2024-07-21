@@ -39,6 +39,6 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 		picBase64 := rust_func.Wcloud(words)
 		msg.Message = fmt.Sprintf("[CQ:image,file=base64://%s]", picBase64)
 	}
-	_, err = msg.Send()
+	_, err = msg.SendMessage()
 	return
 }

@@ -29,7 +29,7 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	msg.UserID = message.UserId
 	msg.GroupID = message.GroupId
 	msg.Message = text
-	_, err = msg.Send()
+	_, err = msg.SendMessage()
 	if err != nil {
 		klog.Error("send message error ", err, msg)
 	}

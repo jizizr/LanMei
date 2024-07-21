@@ -1,5 +1,5 @@
 kitex:
-  service: "rpc"
+  service: "wordcloud"
   address: ":8004"
   log_level: info
   log_file_name: "log/kitex.log"
