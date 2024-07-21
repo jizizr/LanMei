@@ -17,7 +17,7 @@ import (
 
 type ServiceManager struct {
 	services map[string]string
-	command  *sync.Map
+	Command  *sync.Map
 	text     *sync.Map
 	c        *api.Client
 	r        discovery.Resolver
@@ -31,7 +31,7 @@ type RpcClientWithDescription struct {
 func (cmd *ServiceManager) sync(services map[string]struct{}) {
 	for service := range cmd.services {
 		if _, ok := services[service]; !ok {
-			cmd.command.Delete(cmd.services[service])
+			cmd.Command.Delete(cmd.services[service])
 			cmd.text.Delete(service)
 			delete(cmd.services, service)
 		}
@@ -52,12 +52,12 @@ func (cmd *ServiceManager) sync(services map[string]struct{}) {
 			case rpc.CmdType_COMMAND:
 				desc, err := c.Command(context.Background(), &rpc.Empty{})
 				if err != nil {
-					klog.Error("Error getting command description: ", err, ",service: ", service)
+					klog.Error("Error getting Command description: ", err, ",service: ", service)
 					continue
 				}
 				klog.Info(desc.Cmd, desc.Description)
 				cmd.services[service] = desc.Cmd
-				cmd.command.Store(desc.Cmd, RpcClientWithDescription{
+				cmd.Command.Store(desc.Cmd, RpcClientWithDescription{
 					Client: c,
 					Desc:   desc.Description,
 				})
@@ -71,7 +71,7 @@ func (cmd *ServiceManager) sync(services map[string]struct{}) {
 }
 
 func (cmd *ServiceManager) CallCommand(command string, message *bot.Message) (bool, error) {
-	if v, ok := cmd.command.Load(command); ok {
+	if v, ok := cmd.Command.Load(command); ok {
 		c := v.(RpcClientWithDescription).Client
 		return c.Call(context.Background(), message)
 	}
@@ -135,7 +135,7 @@ func NewServiceManager(registryAddress string) (*ServiceManager, error) {
 	}
 	return &ServiceManager{
 		services: make(map[string]string),
-		command:  &sync.Map{},
+		Command:  &sync.Map{},
 		text:     &sync.Map{},
 		c:        c,
 		r:        r,
