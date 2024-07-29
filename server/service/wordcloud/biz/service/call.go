@@ -37,7 +37,7 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 		msg.Message = "群里太冷清了，热闹一点吧！"
 	} else {
 		picBase64 := rust_func.Wcloud(words)
-		msg.Message = fmt.Sprintf("[CQ:image,file=base64://%s]", picBase64)
+		msg.Message = fmt.Sprintf("[CQ:image,file=base64://%s,summary=&#91;词云&#93;]", picBase64)
 	}
 	_, err = msg.SendMessage()
 	return
