@@ -23,4 +23,4 @@ redis:
   db: 0
 
 music:
-  url: "https://api.lolimi.cn/API/yiny"
+  url: "https://api.vkeys.cn/V1/Music/Tencent"

@@ -1,7 +1,9 @@
 package service
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"github.com/jizizr/LanMei/server/common"
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
@@ -28,9 +30,19 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	if err != nil {
 		return
 	}
+	var MusicBuf bytes.Buffer
+	err = util.DownloadMusic(&MusicBuf, musicInfo.Data.Url)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	msg := common.NewMsg(message)
 	musicData := musicInfo.Data
-	msg.Message = fmt.Sprintf("[CQ:file,file=%s,name=%s.mp3]", musicData.Url, musicData.Song)
+	msg.Message = fmt.Sprintf(
+		"[CQ:file,file=base64://%s,name=%s.mp3]",
+		base64.URLEncoding.EncodeToString(MusicBuf.Bytes()),
+		musicData.Song,
+	)
 	_, err = msg.SendMessage()
 	if err != nil {
 		return

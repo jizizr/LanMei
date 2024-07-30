@@ -31,7 +31,7 @@ func GetMusicInfo(musicName string) (musicInfo model.MusicInfo, err error) {
 	return
 }
 
-func downloadMusic(musicBuf io.Writer, musicStreamUrl string) (err error) {
+func DownloadMusic(musicBuf io.Writer, musicStreamUrl string) (err error) {
 	r, err := musicStreamClient.SetOutput(musicBuf).Get(musicStreamUrl)
 	if err != nil {
 		return
@@ -40,19 +40,5 @@ func downloadMusic(musicBuf io.Writer, musicStreamUrl string) (err error) {
 		klog.Error("send message error ", r.String())
 		err = errors.New("request api error")
 	}
-	return
-}
-
-func GetMusic(musicName string) (url string, err error) {
-	//var buf buffer.Buffer
-	//err := downloadMusic(&buf, "http://music.163.com/song/media/outer/url?id=1345848098.mp3")
-	//if err != nil {
-	//	return
-	//}
-	musicInfo, err := GetMusicInfo(musicName)
-	if err != nil {
-		return
-	}
-	url = musicInfo.Data.Url
 	return
 }
