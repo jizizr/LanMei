@@ -16,6 +16,7 @@ var msgClient = DefaultHttpReq(BaseUrl)
 
 type Msg struct {
 	MessageType string `json:"message_type,omitempty"`
+	MessageID   int64  `json:"message_id,omitempty"`
 	UserID      int64  `json:"user_id,omitempty"`
 	GroupID     *int64 `json:"group_id,omitempty"`
 	Message     string `json:"message,omitempty"`
@@ -39,6 +40,7 @@ type Data struct {
 func NewMsg(message *bot.Message) *Msg {
 	return &Msg{
 		MessageType: message.MessageType,
+		MessageID:   message.MessageId,
 		UserID:      message.UserId,
 		GroupID:     message.GroupId,
 		Message:     "",
@@ -46,14 +48,25 @@ func NewMsg(message *bot.Message) *Msg {
 	}
 }
 
-func (m *Msg) Reply(uid ...int64) *Msg {
+func (m *Msg) At(uid ...int64) *Msg {
 	var id int64
 	if len(uid) > 0 {
 		id = uid[0]
 	} else {
 		id = m.UserID
 	}
-	m.Message = fmt.Sprintf("[CQ:at,qq=%d] %s", id, m.Message)
+	m.Message = fmt.Sprintf("[CQ:reply,qq=%d] %s", id, m.Message)
+	return m
+}
+
+func (m *Msg) Reply(mid ...int64) *Msg {
+	var id int64
+	if len(mid) > 0 {
+		id = mid[0]
+	} else {
+		id = m.MessageID
+	}
+	m.Message = fmt.Sprintf("[CQ:reply,id=%d] %s", id, m.Message)
 	return m
 }
 

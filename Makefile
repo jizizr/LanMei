@@ -28,3 +28,11 @@ limiter:
 	$(eval NAME := limiter)
 	@cd ${APP_PATH} && mkdir -p ${NAME}
 	@cd ${APP_PATH}/${NAME} && go mod init ${ROOT_MOD}/${APP_PATH}/${NAME} && cwgo server --type RPC --service rpc --module ${ROOT_MOD}/${APP_PATH}/${NAME} --pass "-use ${ROOT_MOD}/server/rpc_gen/kitex_gen" -I ../../../idl/ --idl ../../../idl/rpc.thrift||true && rm go.mod
+music:
+	$(eval NAME := music)
+	@cd ${APP_PATH} && mkdir -p ${NAME}
+	@cd ${APP_PATH}/${NAME} && go mod init ${ROOT_MOD}/${APP_PATH}/${NAME} && cwgo server --type RPC --service rpc --module ${ROOT_MOD}/${APP_PATH}/${NAME} --pass "-use ${ROOT_MOD}/server/rpc_gen/kitex_gen" -I ../../../idl/ --idl ../../../idl/rpc.thrift||true && rm go.mod
+reply:
+	$(eval NAME := reply)
+	@cd ${APP_PATH} && mkdir -p ${NAME}
+	@cd ${APP_PATH}/${NAME} && go mod init ${ROOT_MOD}/${APP_PATH}/${NAME} && cwgo server --type RPC --service rpc --module ${ROOT_MOD}/${APP_PATH}/${NAME} --pass "-use ${ROOT_MOD}/server/rpc_gen/kitex_gen" -I ../../../idl/ --idl ../../../idl/rpc.thrift||true && rm go.mod

@@ -2,3 +2,5 @@
 .vscode
 *.log
 *.exe
+output
+/server/service/reply/conf/test/conf.yaml
