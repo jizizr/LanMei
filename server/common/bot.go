@@ -55,7 +55,7 @@ func (m *Msg) At(uid ...int64) *Msg {
 	} else {
 		id = m.UserID
 	}
-	m.Message = fmt.Sprintf("[CQ:reply,qq=%d] %s", id, m.Message)
+	m.Message = fmt.Sprintf("[CQ:at,qq=%d] %s", id, m.Message)
 	return m
 }
 
