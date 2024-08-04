@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/jizizr/LanMei/server/common"
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
 	"github.com/jizizr/LanMei/server/service/reply/biz/global"
@@ -19,7 +18,6 @@ func NewCallService(ctx context.Context) *CallService {
 func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	// Finish your business logic.
 	resp = true
-	fmt.Println(123)
 	replies := global.ReplyTable.Match(common.ExtractText(message))
 	for _, reply := range replies {
 		msg := common.NewMsg(message)

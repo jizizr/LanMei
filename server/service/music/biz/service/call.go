@@ -24,6 +24,9 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	resp = true
 	messageArr := strings.SplitN(common.ExtractText(message), " ", 2)
 	if len(messageArr) < 2 {
+		msg := common.NewMsg(message)
+		msg.Message = "使用方法:\n/music [歌名]"
+		msg.Reply().At().SendMessage()
 		return
 	}
 	musicInfo, err := util.GetMusicInfo(strings.TrimSpace(messageArr[1]))
@@ -43,7 +46,7 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 		base64.URLEncoding.EncodeToString(MusicBuf.Bytes()),
 		musicData.Song,
 	)
-	_, err = msg.SendMessage()
+	_, err = msg.Reply().SendMessage()
 	if err != nil {
 		return
 	}

@@ -11,6 +11,7 @@ import (
 	"github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/rpc/rpcservice"
 	consul "github.com/kitex-contrib/registry-consul"
 	"log"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -140,4 +141,16 @@ func NewServiceManager(registryAddress string) (*ServiceManager, error) {
 		c:        c,
 		r:        r,
 	}, nil
+}
+
+func IsAtMe(msg *bot.Message) bool {
+	for _, m := range msg.Message {
+		if m.Type == "at" {
+			qq, _ := strconv.ParseInt(*m.Data.Qq, 10, 64)
+			if qq == msg.SelfId {
+				return true
+			}
+		}
+	}
+	return false
 }
