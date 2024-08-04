@@ -66,7 +66,7 @@ func (m *Msg) Reply(mid ...int64) *Msg {
 	} else {
 		id = m.MessageID
 	}
-	m.Message = fmt.Sprintf("[CQ:reply,id=%d] %s", id, m.Message)
+	m.Message = fmt.Sprintf("[CQ:reply,id=%d]%s", id, m.Message)
 	return m
 }
 
