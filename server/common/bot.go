@@ -77,7 +77,7 @@ func (m *Msg) send(path string) (int64, error) {
 		return 0, err
 	}
 	var resp Response
-	r, err := msgClient.SetBodyBytes(content).SetSuccessResult(&resp).Post(path)
+	r, err := msgClient.R().SetBodyBytes(content).SetSuccessResult(&resp).Post(path)
 	if err != nil {
 		klog.Error("send message error ", err, m)
 		return 0, err

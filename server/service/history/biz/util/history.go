@@ -14,7 +14,7 @@ var client = common.DefaultHttpReq(BaseUrl)
 var hisMatch = regexp.MustCompile(`</em>\.(.*?)</dt>`)
 
 func GetHistory() (text string, err error) {
-	resp, err := client.Get("/")
+	resp, err := client.R().Get("/")
 	if err != nil {
 		return
 	}

@@ -30,7 +30,7 @@ type quote struct {
 
 func GetQuote() (text string, err error) {
 	var res quote
-	r, err := client.SetSuccessResult(&res).Get("/")
+	r, err := client.R().SetSuccessResult(&res).Get("/")
 	if err != nil {
 		return
 	}

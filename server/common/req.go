@@ -5,10 +5,9 @@ import (
 	"time"
 )
 
-func DefaultHttpReq(baseUrl string) *req.Request {
+func DefaultHttpReq(baseUrl string) *req.Client {
 	return req.C().
 		SetBaseURL(baseUrl).
-		R().
-		SetRetryCount(3).
-		SetRetryBackoffInterval(100*time.Millisecond, 500*time.Millisecond)
+		SetCommonRetryCount(3).
+		SetCommonRetryBackoffInterval(100*time.Millisecond, 500*time.Millisecond)
 }

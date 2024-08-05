@@ -36,7 +36,8 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 		point = 5
 	case "试试手气":
 		point = util.GenerateScore()
-
+	default:
+		return
 	}
 
 	isAlreadySignedToday, pointNow, rank, err = mysql.SignIn(message.UserId, point)

@@ -97,7 +97,7 @@ func NewContainRow(words string, reply string) *ContainRow {
 
 func UpdateReplyTable(replyTable *ReplyTable, reversion *int, token string) {
 	var tableMetaInfo model.TableMetaInfo
-	r, err := client.SetSuccessResult(&tableMetaInfo).
+	r, err := client.R().SetSuccessResult(&tableMetaInfo).
 		SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
 		SetPathParam("spreadsheetToken", conf.GetConf().TableAppInfo.SpreadsheetToken).
 		Get("/sheets/v2/spreadsheets/{spreadsheetToken}/metainfo")
@@ -114,7 +114,7 @@ func UpdateReplyTable(replyTable *ReplyTable, reversion *int, token string) {
 	}
 	var rawReplyTable model.ReplyTable
 	sheetID := tableMetaInfo.Data.Sheets[0].SheetId
-	r, err = client.SetSuccessResult(&rawReplyTable).
+	r, err = client.R().SetSuccessResult(&rawReplyTable).
 		SetPathParam("spreadsheetToken", conf.GetConf().TableAppInfo.SpreadsheetToken).
 		SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
 		AddQueryParam("ranges", sheetID).
@@ -162,7 +162,7 @@ func MarkInvalidRegexRow(sheetID string, ranges string, token string) {
 		},
 	}}
 	var resp model.StyleResp
-	r, err := client.SetPathParam("spreadsheetToken", conf.GetConf().TableAppInfo.SpreadsheetToken).
+	r, err := client.R().SetPathParam("spreadsheetToken", conf.GetConf().TableAppInfo.SpreadsheetToken).
 		SetSuccessResult(&resp).
 		SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
 		SetBody(style).

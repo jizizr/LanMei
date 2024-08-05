@@ -14,7 +14,7 @@ func UpdateTenantAccessToken(token *string) int {
 	}
 	// get tenant access token
 	var authResp model.AuthResp
-	_, err := client.SetBody(app).SetSuccessResult(&authResp).Post("/auth/v3/tenant_access_token/internal/")
+	_, err := client.R().SetBody(app).SetSuccessResult(&authResp).Post("/auth/v3/tenant_access_token/internal/")
 	if err != nil {
 		klog.Error("get tenant access token error ", err)
 		return 1
