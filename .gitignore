@@ -4,3 +4,4 @@
 *.exe
 output
 /server/service/reply/conf/test/conf.yaml
+server/service/music/conf/test/conf.yaml
