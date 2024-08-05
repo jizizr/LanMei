@@ -5,10 +5,12 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/jizizr/LanMei/server/common"
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
 	"github.com/jizizr/LanMei/server/service/music/biz/util"
 	"strings"
+	"time"
 )
 
 type CallService struct {
@@ -31,24 +33,35 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	}
 	musicInfo, err := util.GetMusicInfo(strings.TrimSpace(messageArr[1]))
 	if err != nil {
+		klog.Error(err)
+		return
+	}
+	musicStreamUrl, err := util.GetMusicStreamUrl(&musicInfo)
+	if err != nil {
+		klog.Error(err)
 		return
 	}
 	var MusicBuf bytes.Buffer
-	err = util.DownloadMusic(&MusicBuf, musicInfo.Data.Url)
+	err = util.DownloadMusic(&MusicBuf, musicStreamUrl)
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
 	msg := common.NewMsg(message)
-	musicData := musicInfo.Data
 	msg.Message = fmt.Sprintf(
 		"[CQ:file,file=base64://%s,name=%s.mp3]",
 		base64.URLEncoding.EncodeToString(MusicBuf.Bytes()),
-		musicData.Song,
+		musicInfo.Data.Lists[0].SongName,
 	)
-	_, err = msg.Reply().SendMessage()
+	msgID, err := msg.SendMessage()
 	if err != nil {
 		return
 	}
+	msg = common.NewMsg(message)
+	msg.Message = fmt.Sprintf(
+		"歌手：%s\n发布时间：%s",
+		musicInfo.Data.Lists[0].Singers[0].Name,
+		time.Unix(musicInfo.Data.Lists[0].PubTime, 0).Format("2006-01-02"),
+	)
+	msg.Reply(msgID).SendMessage()
 	return
 }
