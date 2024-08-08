@@ -3,5 +3,7 @@
 *.log
 *.exe
 output
-/server/service/reply/conf/test/conf.yaml
-server/service/music/conf/test/conf.yaml
+server/service/reply/conf/*/
+server/service/music/conf/*/
+mysql_data/
+napcat/

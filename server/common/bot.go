@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	BaseUrl = "http://127.0.0.1:3000"
+	BaseUrl = "http://napcat:3000"
 )
 
 var msgClient = DefaultHttpReq(BaseUrl)

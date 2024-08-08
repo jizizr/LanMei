@@ -1,7 +1,7 @@
 package rust_func
 
 /*
-#cgo LDFLAGS: -L../lib -lwcloud
+#cgo LDFLAGS: -L../lib -lwcloud -lm
 #include "../lib/libwcloud.h"
 */
 import "C"

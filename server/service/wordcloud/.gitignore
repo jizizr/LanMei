@@ -33,3 +33,5 @@ _testmain.go
 /.vscode
 /output
 *.local.yml
+biz/lib/glibc
+biz/lib/musl

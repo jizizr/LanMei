@@ -11,7 +11,7 @@ var posSeg pos.Segmenter
 var wordClass = map[string]struct{}{"v": {}, "l": {}, "n": {}, "nr": {}, "a": {}, "vd": {}, "nz": {}, "PER": {}, "f": {}, "ns": {}, "LOC": {}, "s": {}, "nt": {}, "ORG": {}, "nw": {}, "vn": {}}
 
 func init() {
-	err := seg.LoadDict()
+	err := seg.LoadDict("./data/s_1.txt, ./data/t_1.txt")
 	if err != nil {
 		panic(err)
 	}

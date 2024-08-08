@@ -1,6 +1,93 @@
 version: '3'
 services:
+  napcat:
+    container_name: napcat
+    restart: always
+    environment:
+      - ACCOUNT=1726275005
+    image: mlikiowa/napcat-docker:latest
+    volumes:
+      - ./napcat/QQ:/root/.config/QQ
+      - ./napcat/config:/usr/src/app/napcat/config
+    mac_address: "02:42:ac:11:65:43"
   consul:
     image: 'hashicorp/consul'
     ports:
       - '8500:8500'
+  mysql:
+    image: 'mysql:8.3'
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: root
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+  qq-music:
+    image: 'zrcc/qq-music-api:v1'
+    environment:
+      QQ: 1151974238
+  bot:
+    build: output/musl/bot
+    environment:
+      GO_ENV: online
+    depends_on:
+      - consul
+  hitokoto:
+    build: output/musl/hitokoto
+    environment:
+      GO_ENV: online
+  history:
+    build: output/musl/history
+    environment:
+      GO_ENV: online
+    depends_on:
+      - consul
+  cut:
+    build: output/musl/cut
+    environment:
+      GO_ENV: online
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+  limiter:
+    build: output/musl/limiter
+    environment:
+      GO_ENV: online
+    depends_on:
+      - consul
+  music:
+    build: output/musl/music
+    environment:
+      GO_ENV: online
+    depends_on:
+      - qq-music
+      - consul
+  reply:
+    build: output/musl/reply
+    environment:
+      GO_ENV: online
+    depends_on:
+      - consul
+  sign:
+    build: output/musl/sign
+    environment:
+      GO_ENV: online
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+  wordcloud:
+    build: output/musl/wordcloud
+    environment:
+      GO_ENV: online
+    depends_on:
+      consul:
+        condition: service_started
+      mysql:
+        condition: service_healthy

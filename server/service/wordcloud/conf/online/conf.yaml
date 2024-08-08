@@ -1,6 +1,6 @@
 kitex:
-  service: "rpc"
-  address: ":8888"
+  service: "wordcloud"
+  address: ":8004"
   log_level: info
   log_file_name: "log/kitex.log"
   log_max_size: 10
@@ -9,12 +9,12 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:2379
+    - consul:8500
   username: ""
   password: ""
 
 mysql:
-  dsn: "gorm:gorm@tcp(127.0.0.1:3306)/gorm?charset=utf8mb4&parseTime=True&loc=Local"
+  dsn: "root:@tcp(mysql:3306)/lanmei?charset=utf8mb4&parseTime=True&loc=Local"
 
 redis:
   address: "127.0.0.1:6379"

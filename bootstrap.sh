@@ -1,7 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 
+ldd_output=$(ldd --version 2>&1)
+if echo "$ldd_output" | grep -iq 'musl'; then
+    SYSTEM_LIBC="musl"
+elif echo "$ldd_output" | grep -iq 'glibc'; then
+    SYSTEM_LIBC="glibc"
+else
+    echo "Unknown C library. Exiting..."
+    exit 1
+fi
 # 定义ROOT_OUTPUT_DIR
-ROOT_OUTPUT_DIR="output"
+ROOT_OUTPUT_DIR="output/$SYSTEM_LIBC"
 
 # 获取output目录下的所有子目录
 DIRS=$(find "$ROOT_OUTPUT_DIR" -mindepth 1 -maxdepth 1 -type d)
@@ -15,9 +24,9 @@ for dir in $DIRS; do
   if [ -f "$dir/bootstrap.sh" ]; then
     echo "Starting bootstrap.sh in directory: $dir"
     # 以后台方式运行bootstrap.sh，并确保获取正确的PID
-    pushd "$dir" > /dev/null
-    bash bootstrap.sh &
-    popd > /dev/null
+    cd "$dir"
+    sh bootstrap.sh &
+    cd -
     echo $! >> "$PID_FILE"
   else
     echo "No bootstrap.sh in $dir, skipping..."
