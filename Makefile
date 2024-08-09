@@ -1,5 +1,9 @@
 export ROOT_MOD=github.com/jizizr/LanMei
 export APP_PATH=server/service
+.PHONY: go-builder
+go-builder:
+	docker build -t my-go-builder .
+	docker run -it -d --name go-builder -v .:/app my-go-builder sh
 .PHONY: bot
 bot:
 	@cd ${APP_PATH}/bot && go mod init ${ROOT_MOD}/${APP_PATH}/bot && cwgo server --service bot --type HTTP --idl ../../../idl/bot.thrift --module ${ROOT_MOD}/${APP_PATH}/bot -I ../../../idl/ && rm go.mod

@@ -5,15 +5,13 @@ services:
     restart: always
     environment:
       - ACCOUNT=1726275005
-    image: mlikiowa/napcat-docker:latest
+    image: 'mlikiowa/napcat-docker:latest'
     volumes:
       - ./napcat/QQ:/root/.config/QQ
       - ./napcat/config:/usr/src/app/napcat/config
     mac_address: "02:42:ac:11:65:43"
   consul:
     image: 'hashicorp/consul'
-    ports:
-      - '8500:8500'
   mysql:
     image: 'mysql:8.3'
     environment:
