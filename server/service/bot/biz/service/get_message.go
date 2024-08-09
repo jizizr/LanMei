@@ -80,10 +80,14 @@ func (h *GetMessageService) Run(req *bot.Message) (resp *bot.Response, err error
 				if err != nil {
 					hlog.Error(h.Context, "Help", "err", err)
 				}
-			}
-			_, err = global.Manager.CallCommand(command, &m)
-			if err != nil {
-				hlog.Error(h.Context, "global.Manager.CallCommand", "err", err)
+			} else {
+				ok, err := global.Manager.CallCommand(command, &m)
+				if err != nil {
+					hlog.Error(h.Context, "global.Manager.CallCommand", "err", err)
+				}
+				if !ok {
+					global.Manager.CallText(&m)
+				}
 			}
 		} else {
 			global.Manager.CallText(&m)
