@@ -117,6 +117,7 @@ func UpdateReplyTable(replyTable *ReplyTable, reversion *int, token string) {
 	r, err = client.R().SetSuccessResult(&rawReplyTable).
 		SetPathParam("spreadsheetToken", conf.GetConf().TableAppInfo.SpreadsheetToken).
 		SetHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+		AddQueryParam("valueRenderOption", "ToString").
 		AddQueryParam("ranges", sheetID).
 		Get("/sheets/v2/spreadsheets/{spreadsheetToken}/values_batch_get")
 	if err != nil {
@@ -129,7 +130,9 @@ func UpdateReplyTable(replyTable *ReplyTable, reversion *int, token string) {
 	}
 	newReplyTable := make(ReplyTable, 0, len(rawReplyTable.Data.ValueRanges[0].Values)-1)
 	for i, value := range rawReplyTable.Data.ValueRanges[0].Values[1:] {
-		if len(value) < 3 {
+		if len(value) < 3 ||
+			value[0] == "" ||
+			value[1] == "" {
 			continue
 		}
 
