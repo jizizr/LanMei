@@ -1,7 +1,15 @@
 #!/bin/bash
 
-# 定义ROOT_OUTPUT_DIR
-ROOT_OUTPUT_DIR="output"
+ldd_output=$(ldd --version 2>&1)
+if echo "$ldd_output" | grep -iq 'musl'; then
+    SYSTEM_LIBC="musl"
+elif echo "$ldd_output" | grep -iq 'glibc'; then
+    SYSTEM_LIBC="glibc"
+else
+    echo "Unknown C library. Exiting..."
+    exit 1
+fi
+ROOT_OUTPUT_DIR="output/$SYSTEM_LIBC"
 
 # 定义pids文件位置
 PID_FILE="$ROOT_OUTPUT_DIR/pids"

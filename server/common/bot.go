@@ -114,5 +114,5 @@ func ExtractText(msg *bot.Message) string {
 		}
 		texts = append(texts, *m.Data.Text)
 	}
-	return strings.Join(texts, "")
+	return strings.TrimSpace(strings.Join(texts, ""))
 }
