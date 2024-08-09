@@ -25,7 +25,11 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	if common.IsBot(message.UserId) {
 		return
 	}
-	words := util.Cut(common.ExtractText(message))
+	text := common.ExtractText(message)
+	if text == "签到" || text == "试试手气" || text == "保底签到" || text == "排名" {
+		return
+	}
+	words := util.Cut(text)
 	err = mysql.AddWords(*message.GroupId, words)
 	return
 }
