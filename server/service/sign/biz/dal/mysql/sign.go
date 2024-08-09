@@ -104,3 +104,8 @@ func SignIn(userQQ int64, point int64) (alreadySignedToday bool, pointNow, rank 
 	rank, err = getUserRankByPoints(pointNow)
 	return
 }
+
+func GetRankTopN(n int) (rankList []model.Sign, err error) {
+	err = DB.Order("point desc").Limit(n).Find(&rankList).Error
+	return
+}

@@ -26,6 +26,13 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	var isAlreadySignedToday bool
 	msg := common.NewMsg(message)
 	switch text {
+	case "排名":
+		text, err = util.GetRankN(message, 10)
+		if err != nil {
+			klog.Error(err)
+			return
+		}
+		goto SEND
 	case "签到":
 		text = `说明：
 发送[]内的文字即可执行对应签到操作
