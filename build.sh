@@ -49,7 +49,7 @@ process_directory() {
       if [ ! -f "$dir/Dockerfile" ]; then
       # 创建 Dockerfile
       cat <<EOF > "$target_dir/Dockerfile"
-FROM alpine:latest
+FROM lanmei-base:1.0
 WORKDIR /app
 COPY . .
 CMD ["sh","bootstrap.sh"]
