@@ -8,6 +8,7 @@ import (
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
 	"github.com/jizizr/LanMei/server/service/sign/biz/dal/mysql"
 	"github.com/jizizr/LanMei/server/service/sign/biz/util"
+	"github.com/jizizr/LanMei/server/service/sign/conf"
 )
 
 type CallService struct {
@@ -21,6 +22,9 @@ func NewCallService(ctx context.Context) *CallService {
 func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	// Finish your business logic.
 	resp = true
+	if message.GetGroupId() != conf.GetConf().Group.Number {
+		return
+	}
 	text := common.ExtractText(message)
 	var point, pointNow, rank int64
 	var isAlreadySignedToday bool

@@ -21,3 +21,5 @@ redis:
   username: ""
   password: ""
   db: 0
+group:
+  number: 434025815
