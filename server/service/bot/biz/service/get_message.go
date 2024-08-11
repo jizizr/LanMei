@@ -58,6 +58,7 @@ func (h *GetMessageService) Run(req *bot.Message) (resp *bot.Response, err error
 	if req.Message == nil {
 		return
 	}
+	utils.FixMessage(req)
 	for i, msg := range req.Message {
 		if msg.Type != "text" {
 			continue
@@ -65,7 +66,9 @@ func (h *GetMessageService) Run(req *bot.Message) (resp *bot.Response, err error
 		command := strings.TrimSpace(*msg.Data.Text)
 		var m bot2.Message
 		err = copier.Copy(&m, req)
-		if strings.HasPrefix(command, "/") || i != 0 && req.Message[i-1].Type == "at" && ParseStringToInt(*req.Message[i-1].Data.Qq) == req.SelfID {
+		if strings.HasPrefix(command, "/") ||
+			i != 0 && req.Message[i-1].Type == "at" &&
+				(ParseStringToInt(*req.Message[i-1].Data.Qq) == req.SelfID || *req.Message[i-1].Data.Qq == "0") {
 			if err != nil {
 				hlog.Error(h.Context, "copier.Copy", "err", err)
 				return
