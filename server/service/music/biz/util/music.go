@@ -24,7 +24,17 @@ var musicStreamClient = req.C().
 	SetRetryBackoffInterval(100*time.Millisecond, 500*time.Millisecond)
 
 func InitCookie() {
-	cookie := model.Ck{Data: conf.GetConf().Music.Ck}
+	msg := common.Msg{
+		MessageType: "private",
+		UserID:      conf.GetConf().Music.Admin,
+		Message:     "初始化cookie",
+		AutoEscape:  false,
+	}
+	msg.SendMessage()
+}
+
+func SetCookie(ck string) string {
+	cookie := model.Ck{Data: ck}
 	var resp model.CkResp
 	r, err := client.R().SetBody(cookie).SetSuccessResult(&resp).Post("/user/SetCookie")
 	if err != nil {
@@ -33,6 +43,7 @@ func InitCookie() {
 	if !r.IsSuccessState() || resp.Result != 100 {
 		panic("init cookie error")
 	}
+	return r.String()
 }
 
 func GetMusicInfo(musicName string) (musicInfo model.MusicInfo, err error) {
