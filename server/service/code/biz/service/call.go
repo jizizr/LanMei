@@ -29,7 +29,7 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 /code [语言]
 [代码]
 `
-		msg.Reply().At().SendMessage()
+		msg.SendMessage()
 		return
 	}
 	result, err := util.Run(code, language)
@@ -39,6 +39,6 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	}
 	msg.Message = result
 	msg.AutoEscape = true
-	msg.Reply().SendMessage()
+	msg.SendMessage()
 	return
 }
