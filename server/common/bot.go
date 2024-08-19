@@ -15,13 +15,14 @@ const (
 var MsgClient = DefaultHttpReq(BaseUrl)
 
 type Msg struct {
-	MessageType string `json:"message_type,omitempty"`
-	MessageID   int64  `json:"message_id,omitempty"`
-	UserID      int64  `json:"user_id,omitempty"`
-	GroupID     *int64 `json:"group_id,omitempty"`
-	Message     string `json:"message,omitempty"`
-	Duration    uint32 `json:"duration,omitempty"`
-	AutoEscape  bool   `json:"auto_escape,omitempty"`
+	MessageType string        `json:"message_type,omitempty"`
+	MessageID   int64         `json:"message_id,omitempty"`
+	UserID      int64         `json:"user_id,omitempty"`
+	GroupID     *int64        `json:"group_id,omitempty"`
+	Message     string        `json:"message,omitempty"`
+	Messages    []interface{} `json:"messages,omitempty"`
+	Duration    uint32        `json:"duration,omitempty"`
+	AutoEscape  bool          `json:"auto_escape,omitempty"`
 }
 
 type Response struct {
@@ -70,7 +71,7 @@ func (m *Msg) Reply(mid ...int64) *Msg {
 	return m
 }
 
-func (m *Msg) send(path string) (int64, error) {
+func (m *Msg) Send(path string) (int64, error) {
 	content, err := sonic.Marshal(m)
 	if err != nil {
 		klog.Error("marshal message error ", err, m)
@@ -94,12 +95,12 @@ func (m *Msg) send(path string) (int64, error) {
 }
 
 func (m *Msg) SendMessage() (int64, error) {
-	return m.send("/send_msg")
+	return m.Send("/send_msg")
 }
 
 func (m *Msg) SendBan(d uint32) (int64, error) {
 	m.Duration = d
-	return m.send("/set_group_ban")
+	return m.Send("/set_group_ban")
 }
 
 func IsBot(user int64) bool {

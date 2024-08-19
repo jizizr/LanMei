@@ -14,3 +14,22 @@ type GlotResp struct {
 	Error  string `json:"error"`
 	Stderr string `json:"stderr"`
 }
+
+type Message struct {
+	Type string `json:"type"`
+	Data Data   `json:"data"`
+}
+
+type Data struct {
+	Uin     int64     `json:"uin"`
+	Content []Content `json:"content"`
+}
+
+type Content struct {
+	Type string      `json:"type"`
+	Data ContentData `json:"data"`
+}
+
+type ContentData struct {
+	Text string `json:"text"`
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/jizizr/LanMei/server/common"
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
+	"github.com/jizizr/LanMei/server/service/code/biz/model"
 	"github.com/jizizr/LanMei/server/service/code/biz/util"
 )
 
@@ -37,8 +38,25 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 		klog.Error(err)
 		return
 	}
-	msg.Message = result
-	msg.AutoEscape = true
-	msg.SendMessage()
+	var messages = model.Message{
+		Type: "node",
+		Data: model.Data{
+			Uin: message.SelfId,
+			Content: []model.Content{
+				{
+					Type: "text",
+					Data: model.ContentData{
+						Text: result,
+					},
+				},
+			},
+		},
+	}
+	msg.Messages = []interface{}{messages}
+	if message.IsSetGroupId() {
+		msg.Send("/send_private_forward_msg")
+	} else {
+		msg.Send("/send_group_forward_msg")
+	}
 	return
 }
