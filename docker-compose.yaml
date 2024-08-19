@@ -89,3 +89,10 @@ services:
         condition: service_started
       mysql:
         condition: service_healthy
+  code:
+    build: output/musl/code
+    environment:
+      GO_ENV: online
+    depends_on:
+      consul:
+        condition: service_started
