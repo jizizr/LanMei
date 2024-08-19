@@ -5,7 +5,7 @@ services:
     restart: always
     environment:
       - ACCOUNT=1726275005
-    image: 'mlikiowa/napcat-docker:latest'
+    image: 'mlikiowa/napcat-docker:v1.7.8'
     volumes:
       - ./napcat/QQ:/root/.config/QQ
       - ./napcat/config:/usr/src/app/napcat/config
