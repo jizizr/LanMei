@@ -38,6 +38,7 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 		return
 	}
 	msg.Message = result
+	msg.AutoEscape = true
 	msg.Reply().SendMessage()
 	return
 }
