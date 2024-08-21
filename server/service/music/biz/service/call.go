@@ -33,7 +33,6 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 		return
 	}
 	if message.UserId == conf.GetConf().Music.Admin && strings.HasPrefix(messageArr[1], "RK=") {
-		fmt.Println(123)
 		r := util.SetCookie(messageArr[1])
 		msg := common.NewMsg(message)
 		msg.Message = r
