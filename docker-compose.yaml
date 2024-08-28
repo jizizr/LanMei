@@ -96,3 +96,10 @@ services:
     depends_on:
       consul:
         condition: service_started
+  gpt:
+    build: output/musl/gpt
+    environment:
+      GO_ENV: online
+    depends_on:
+      consul:
+        condition: service_started
