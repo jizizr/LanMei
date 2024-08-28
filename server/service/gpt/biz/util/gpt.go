@@ -3,7 +3,6 @@ package util
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/jizizr/LanMei/server/common"
@@ -15,6 +14,7 @@ import (
 )
 
 var client *openai.Client
+var lastMessageID [2]string
 var runReq = openai.RunRequest{
 	AssistantID: conf.GetConf().GPT.AssistantID,
 }
@@ -35,12 +35,18 @@ func AddMessage(msg *bot.Message) error {
 		Role:    "user",
 		Content: text,
 	}
-	_, err := client.CreateMessage(
+	m, err := client.CreateMessage(
 		context.Background(),
 		conf.GetConf().GPT.ThreadID,
 		messageReq,
 	)
-	return err
+	if err != nil {
+		return err
+	} else {
+		lastMessageID[0] = lastMessageID[1]
+		lastMessageID[1] = m.ID
+		return nil
+	}
 }
 
 func RunThread() (openai.Run, error) {
@@ -56,12 +62,17 @@ func ListMessage(limiter int) (openai.MessagesList, error) {
 }
 
 func HandlerMessage(msg *bot.Message) {
-	fmt.Println("HandlerMessage")
 	err := AddMessage(msg)
 	if err != nil {
 		klog.Error(err)
 		return
 	}
+	defer func() {
+		if lastMessageID[0] == "" {
+			return
+		}
+		go client.DeleteMessage(context.Background(), conf.GetConf().GPT.ThreadID, lastMessageID[0])
+	}()
 	run, err := RunThread()
 	if err != nil {
 		klog.Error(err)
@@ -75,7 +86,7 @@ func HandlerMessage(msg *bot.Message) {
 		}
 	}
 	if run.Status != openai.RunStatusCompleted {
-		klog.Error("run status is not complete")
+		klog.Error("run status is not complete ", run.Status)
 		hlog.Error(run)
 		return
 	}
