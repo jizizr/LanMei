@@ -107,5 +107,6 @@ func HandlerMessage(msg *bot.Message) {
 		m := common.NewMsg(msg)
 		m.Message = messages.Messages[0].Content[0].Text.Value
 		m.Reply().SendMessage()
+		client.DeleteMessage(context.Background(), conf.GetConf().GPT.ThreadID, messages.Messages[0].ID)
 	}()
 }
