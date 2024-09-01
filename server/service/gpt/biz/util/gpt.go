@@ -3,6 +3,7 @@ package util
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/jizizr/LanMei/server/common"
@@ -11,6 +12,11 @@ import (
 	"github.com/jizizr/LanMei/server/service/gpt/conf"
 	openai "github.com/sashabaranov/go-openai"
 	"strings"
+)
+
+const (
+	costPerMillionTokens = 0.150
+	costPerToken         = costPerMillionTokens / 1000000
 )
 
 var client *openai.Client
@@ -105,7 +111,11 @@ func HandlerMessage(msg *bot.Message) {
 			return
 		}
 		m := common.NewMsg(msg)
-		m.Message = messages.Messages[0].Content[0].Text.Value
+		m.Message = fmt.Sprintf("%s\n\n共消耗%dToken ≈ %.5f$",
+			messages.Messages[0].Content[0].Text.Value,
+			run.Usage.TotalTokens,
+			float64(run.Usage.TotalTokens)*costPerToken,
+		)
 		m.Reply().SendMessage()
 		client.DeleteMessage(context.Background(), conf.GetConf().GPT.ThreadID, messages.Messages[0].ID)
 	}()
