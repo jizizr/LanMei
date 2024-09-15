@@ -24,8 +24,8 @@ func generateScore() float64 {
 
 func GenerateScore() int64 {
 	score := generateScore()
-	for score < 0.0 {
-		score = generateScore()
-	}
+	//for score < 0.0 {
+	//	score = generateScore()
+	//}
 	return int64(math.Round(score))
 }
