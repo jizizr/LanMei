@@ -15,7 +15,7 @@ var musicUrl = conf.GetConf().Music.Url
 
 var client = common.DefaultHttpReq(musicUrl).
 	AddCommonQueryParam("choose", "1").
-	AddCommonQueryParam("quality", "7")
+	AddCommonQueryParam("quality", "8")
 
 var musicStreamClient = req.C().
 	R().
