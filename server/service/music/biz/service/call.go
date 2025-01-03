@@ -9,7 +9,6 @@ import (
 	"github.com/jizizr/LanMei/server/common"
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
 	"github.com/jizizr/LanMei/server/service/music/biz/util"
-	"github.com/jizizr/LanMei/server/service/music/conf"
 	"strings"
 	"time"
 )
@@ -30,13 +29,6 @@ func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 		msg := common.NewMsg(message)
 		msg.Message = "使用方法:\n/music [歌名]"
 		msg.Reply().At().SendMessage()
-		return
-	}
-	if message.UserId == conf.GetConf().Music.Admin && strings.HasPrefix(messageArr[1], "RK=") {
-		r := util.SetCookie(messageArr[1])
-		msg := common.NewMsg(message)
-		msg.Message = r
-		msg.Reply().SendMessage()
 		return
 	}
 	musicInfo, err := util.GetMusicInfo(strings.TrimSpace(messageArr[1]))
