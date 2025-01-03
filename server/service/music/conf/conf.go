@@ -58,7 +58,6 @@ type Registry struct {
 
 type Music struct {
 	Url string `yaml:"url"`
-	Ck  string `yaml:"ck"`
 }
 
 // GetConf gets configuration instance
