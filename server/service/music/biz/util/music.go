@@ -13,14 +13,17 @@ import (
 
 var musicUrl = conf.GetConf().Music.Url
 
-var client = common.DefaultHttpReq(musicUrl).SetQueryString("n=1&q=7")
+var client = common.DefaultHttpReq(musicUrl).
+	AddCommonQueryParam("choose", "1").
+	AddCommonQueryParam("quality", "7")
+
 var musicStreamClient = req.C().
 	R().
 	SetRetryCount(3).
 	SetRetryBackoffInterval(100*time.Millisecond, 500*time.Millisecond)
 
 func GetMusicInfo(musicName string) (musicInfo model.MusicInfo, err error) {
-	r, err := client.SetSuccessResult(&musicInfo).AddQueryParam("word", musicName).Get("/")
+	r, err := client.R().SetSuccessResult(&musicInfo).AddQueryParam("word", musicName).Get("/")
 	if err != nil {
 		return
 	}
