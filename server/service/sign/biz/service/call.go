@@ -22,9 +22,9 @@ func NewCallService(ctx context.Context) *CallService {
 func (s *CallService) Run(message *bot.Message) (resp bool, err error) {
 	// Finish your business logic.
 	resp = true
-	if message.GetGroupId() != conf.GetConf().Group.Number {
-		return
-	}
+	// if message.GetGroupId() != conf.GetConf().Group.Number {
+	// 	return
+	// }
 	text := common.ExtractText(message)
 	var point, pointNow, rank int64
 	var isAlreadySignedToday bool
