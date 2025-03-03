@@ -8,7 +8,6 @@ import (
 	bot "github.com/jizizr/LanMei/server/rpc_gen/kitex_gen/bot"
 	"github.com/jizizr/LanMei/server/service/sign/biz/dal/mysql"
 	"github.com/jizizr/LanMei/server/service/sign/biz/util"
-	"github.com/jizizr/LanMei/server/service/sign/conf"
 )
 
 type CallService struct {
